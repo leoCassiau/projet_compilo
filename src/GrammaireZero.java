@@ -163,7 +163,6 @@ public class GrammaireZero {
 	
 	//----------------------------------------Analyseur---------------------------------
 	public boolean analyse(Noeud p){
-		System.out.println(p.getCode());
 		if(p.getCode().equals("conc")){
 			if(analyse(p.getGauche())){
 				return analyse(p.getDroit());
@@ -187,9 +186,9 @@ public class GrammaireZero {
 		}
 		else if(p.getClass().equals(NoeudAtom.class)){
 			NoeudAtom pAtom = (NoeudAtom) p;
-			System.out.println("----------> " + pAtom.getChaine());
 			if(pAtom.isTerminal()){
-				if(pAtom.getCode().equals(sc.nextToken())){ 
+				String tutu = sc.nextToken();
+				if(pAtom.getChaine().equals(tutu)){
 					if(pAtom.getAction() != 0){
 						//TODO g0.action(pAtom.act);
 					}
@@ -202,6 +201,7 @@ public class GrammaireZero {
 						//TODO g0.action(pAtom.act);
 						return true;
 					}
+					return true;
 				}
 			}
 		} 
@@ -263,11 +263,11 @@ public class GrammaireZero {
 	 */
 	public static void main(String[] args) {
 		GrammaireZero c = new GrammaireZero();
-		//c.imprimArbre(c.getArbreDependance().get("S"));
+		c.imprimArbre(c.getArbreDependance().get("S"));
 		//c.imprimArbre(c.getArbreDependance().get("N"));
 		//c.imprimArbre(c.getArbreDependance().get("E"));
 		//c.imprimArbre(c.getArbreDependance().get("T"));
-		c.imprimArbre(c.getArbreDependance().get("F"));
+		//c.imprimArbre(c.getArbreDependance().get("F"));
 		
 		System.out.println(c.analyse(c.getArbreDependance().get("S")));
 	}
