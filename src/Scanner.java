@@ -45,7 +45,7 @@ public class Scanner {
 	private int i = 0;
 	public String nextToken() {
 		//String[] t = {"S0", "->", "[", "a", "]", ".", "b", ",", ";" };
-		String[] t = {"IDNTER", "->", "[", "ELTER", "]", ".", "ELTER", ",", ";"};
+		String[] t = {"IDNTER", "->", "[", "ELTER", "]", ".", "ELTER", ",", ";", ""};
 		return t[i++];
 	}
 	
