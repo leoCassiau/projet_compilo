@@ -8,7 +8,7 @@ import java.util.Stack;
 public class GrammaireZero {
 
 	private Map<String, Noeud> arbreDependance = new HashMap<String, Noeud>();
-	private Scanner sc = new Scanner();
+	private ScannerToken sc = new ScannerToken();
 	private Stack<Noeud> actions = new Stack<Noeud>();
 	private List<String> dicot = new ArrayList<String>();
 	private List<String> dicont = new ArrayList<String>();
@@ -258,9 +258,6 @@ public class GrammaireZero {
 		}
 	}
 	
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		GrammaireZero c = new GrammaireZero();
 		//c.imprimArbre(c.getArbreDependance().get("S"));
