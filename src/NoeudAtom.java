@@ -36,5 +36,8 @@ public class NoeudAtom extends Noeud{
 		this.chaine = chaine;
 	}
 
+	public String toString() {
+		return "Chaine : " + chaine + " ; Action : " + action + " ; terminal : " + terminal + " ; " + super.toString() ;
+	}
 
 }

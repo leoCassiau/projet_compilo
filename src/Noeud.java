@@ -42,4 +42,8 @@ public class Noeud {
 	public void setCode(String code) {
 		this.code = code;
 	}
+	
+	public String toString() {
+		return "Code : " + code + " ;  \n Fils gauche : " + gauche + " ; \n Fils droit : " + droit + " ; \n";
+	}
 }
