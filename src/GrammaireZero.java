@@ -1,4 +1,5 @@
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,12 +9,15 @@ import java.util.Stack;
 public class GrammaireZero {
 
 	private Map<String, Noeud> arbreDependance = new HashMap<String, Noeud>();
-	private ScannerToken sc = new ScannerToken();
+	private ScannerToken sc;
+	private NoeudAtom token;
 	private Stack<Noeud> actions = new Stack<Noeud>();
 	private List<String> dicot = new ArrayList<String>();
 	private List<String> dicont = new ArrayList<String>();
 	
-	public GrammaireZero() {
+	public GrammaireZero() throws FileNotFoundException {
+		sc = new ScannerToken("grammaireTest.txt");
+		token = sc.nextToken();
 		arbreDependance.put("S", creerArbreS());
 		arbreDependance.put("N", creerArbreN());
 		arbreDependance.put("E", creerArbreE());
@@ -47,7 +51,7 @@ public class GrammaireZero {
 	}
 	
 	public NoeudAtom genAtom(String chaine, int action, boolean terminal){
-		if(terminal) {
+		if(terminal && chaine != "IDNTER") {
 			return new NoeudAtom("ELTER",chaine, action, terminal); 
 		}
 		return new NoeudAtom("IDNTER",chaine, action, terminal); 
@@ -162,7 +166,6 @@ public class GrammaireZero {
 	}
 	
 	//----------------------------------------Analyseur---------------------------------
-	private String tutu = sc.nextToken();
 	public boolean analyse(Noeud p){
 		if(p.getCode().equals("conc")){
 			if(analyse(p.getGauche())){
@@ -187,12 +190,15 @@ public class GrammaireZero {
 		}
 		else if(p.getClass().equals(NoeudAtom.class)){
 			NoeudAtom pAtom = (NoeudAtom) p;
+			System.out.println("pAtom code : " +pAtom.getCode() + " ; chaine : " + pAtom.getChaine());
+			System.out.println("token code : " +token.getCode() + " ; chaine : " + token.getChaine());
+
 			if(pAtom.isTerminal()){
-				if(pAtom.getChaine().equals(tutu)){
+				if(pAtom.getCode().equals(token.getCode())){
 					if(pAtom.getAction() != 0){
 						//TODO g0.action(pAtom.act);
 					}
-					tutu = sc.nextToken();
+					token = sc.nextToken();
 					return true;
 				}
 			}else { // !pAtom.isTerminal 
@@ -204,7 +210,7 @@ public class GrammaireZero {
 					return true;
 				}
 			}
-		} 
+		}
 		return false;
 	}
 	
@@ -241,11 +247,11 @@ public class GrammaireZero {
 			actions.push(genConc(t2,t1));
 			break;
 		case 5 :
-			if(CAType) {
-				actions.push(genAtom(recherche(dicot, ?), action, true));
-			} else {
-				actions.push(genAtom(recherche(dicont, ?), action, false));
-			}
+		//	if(CAType) {
+				//actions.push(genAtom(recherche(dicot, ?), action, true));
+			//} else {
+				//actions.push(genAtom(recherche(dicont, ?), action, false));
+			//}
 			break;
 		case 6 :
 			t1 = actions.pop();
@@ -258,7 +264,7 @@ public class GrammaireZero {
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		GrammaireZero c = new GrammaireZero();
 		//c.imprimArbre(c.getArbreDependance().get("S"));
 		//c.imprimArbre(c.getArbreDependance().get("N"));
