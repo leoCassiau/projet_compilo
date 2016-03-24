@@ -9,45 +9,46 @@ public class Gpl {
 	private Stack<Integer> pcode = new Stack< Integer>();
 	
 	//Pointeurs de pile
-	private int spx = 0;
+	private int spx = -1;
 	private int c0 = 0;
 	
 	//Variables temp
 	private int valeurInteger = 0;
-	private String valeurString = "";
+	//private String valeurString = "";
 	private Scanner sc = new Scanner(System.in);
 
 	public void interpreter(int x){
 
-		
-		
-		
-		
-		
-		
 		switch(x){
 		//Inst de chargement
 		case 1: //LDA
-			//spx ++;
+			spx ++;
 			pilex.push( pcode.get(c0 + 1) );
 			c0 = c0 +2;
-			
 			break;
 		case 2: //LDV
-			//spx ++;
+			spx ++;
 			pilex.push( pilex.get(pcode.get(c0+1)) );
 			c0 = c0 +2;
 			break;
 		case 3://LDC
-			//spx ++;
+			spx ++;
 			pilex.push( pcode.get(c0 + 1) );
 			c0 = c0 +2;
 			break;
 			
 			//Inst de saut
 		case 4 ://JMP @
+			c0 = pcode.get(c0+1);
 			break;
-		case 5 ://JIF @
+		case 5 ://JIF @			
+			if(pilex.get(spx) == new Integer(0)){
+				c0 = pcode.get(c0+1);
+			}
+			else{
+				c0 = c0+2;
+			}
+			spx --;
 			break;
 		case  6://JSR @
 			break;
@@ -125,8 +126,8 @@ public class Gpl {
 			//Inst pour entrée/sortie
 		case 14: //RD
 			spx ++;
-			valeurString = sc.next();
-			pilex.push(valeurString);
+			valeurInteger = sc.nextInt();
+			pilex.push(valeurInteger);
 			c0 ++;
 			break;
 		case  15://RDCN
@@ -211,14 +212,18 @@ public class Gpl {
 			c0 ++;
 			break;
 		case 28://AFF
-			valeurString = (String) pilex.get(spx);
+			System.out.println("Affectation -> "+pilex.get(spx));
+			valeurInteger = (Integer) pilex.get(spx);
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurString);
+			pilex.push(valeurInteger);
 			c0++;
+			
+
 			break;
 		case 29://STOP inst d'arret
+			c0 = pcode.size();
 			break;
 		case 30://INDA adresse indexée
 			break;
@@ -227,8 +232,8 @@ public class Gpl {
 			
 		}
 		System.out.println("valeur: " + x);
-		System.out.println("pilex : " + pilex.get(spx));
-		System.out.println("pcode : " + pcode.get(c0));
+		//System.out.println("pilex : " + pilex.get(spx));
+		//System.out.println("pcode : " + pcode.get(c0));
 		System.out.println("------------------------");
 	}
 	
@@ -238,36 +243,50 @@ public class Gpl {
 		while(c0 < pcode.size()){
 			interpreter(pcode.get(c0));
 		}
+		
+		System.out.println("Pilex : ");
+		for(int i =0; i<pilex.size(); i++){
+			System.out.println("|"+pilex.get(i)+"|");
+		}
+		
+
+		System.out.println("\nPcode : ");
+		for(int i =0; i<pcode.size(); i++){
+			System.out.println("|"+pcode.get(i)+"|");
+		}
+		
 	}
 	
 	public void programSom(){
-		this.pcode.push(1);
-		this.pcode.push(3);
+		this.pcode.push(1);//LDA
+		this.pcode.push(3);//3
 		this.pcode.push(14);//RD
-		this.pcode.push(28);
-		this.pcode.push(1);
-		this.pcode.push(2);
-		this.pcode.push(3);
-		this.pcode.push(0);
-		this.pcode.push(28);
-		this.pcode.push(1);
-		this.pcode.push(1);
-		this.pcode.push(3);
-		this.pcode.push(0);
-		this.pcode.push(28);
-		this.pcode.push(2);
-		this.pcode.push(1);
-		this.pcode.push(2);
-		this.pcode.push(3);
+		this.pcode.push(28);//AFF
+		this.pcode.push(1);//LDA
+		this.pcode.push(2);//2
+		this.pcode.push(3);//LDC
+		this.pcode.push(0);//0
+		this.pcode.push(28);//AFF
+		
+		this.pcode.push(1);//LDA
+		this.pcode.push(1);//1
+		this.pcode.push(3);//LDC
+		this.pcode.push(0);//0
+		this.pcode.push(28);//AFF
+		
+		this.pcode.push(2);//LDV
+		this.pcode.push(1);//1
+		this.pcode.push(2);//LDV
+		this.pcode.push(3);//3
 		this.pcode.push(11);//INFE
-		this.pcode.push(5);
-		this.pcode.push(38);
-		this.pcode.push(1);
-		this.pcode.push(2);
-		this.pcode.push(2);
-		this.pcode.push(2);
-		this.pcode.push(2);
-		this.pcode.push(1);
+		this.pcode.push(5);//JIF
+		this.pcode.push(38);//38
+		this.pcode.push(1);//LDA
+		this.pcode.push(2);//2
+		this.pcode.push(2);//LDV
+		this.pcode.push(2);//2
+		this.pcode.push(2);//LDV
+		this.pcode.push(1);//1
 		this.pcode.push(18);//ADD S+I
 		this.pcode.push(28);
 		this.pcode.push(1);
@@ -283,6 +302,7 @@ public class Gpl {
 		this.pcode.push(17);//WRTLN
 		this.pcode.push(29);
 	}
+	
 	
 	
 }

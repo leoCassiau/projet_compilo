@@ -264,6 +264,7 @@ public class GrammaireZero {
 		}
 	}
 	
+	/*
 	public static void main(String[] args) throws FileNotFoundException {
 		GrammaireZero c = new GrammaireZero();
 		//c.imprimArbre(c.getArbreDependance().get("S"));
@@ -274,5 +275,5 @@ public class GrammaireZero {
 		
 		System.out.println(c.analyse(c.getArbreDependance().get("S")));
 	}
-
+*/
 }
