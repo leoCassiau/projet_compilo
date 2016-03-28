@@ -1,21 +1,23 @@
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
 public class GrammaireZero {
 
 	private Map<String, Noeud> arbreDependance = new HashMap<String, Noeud>(); // Arbre de dépendance de la grammaire zéro
-	private ScannerToken sc; // Scanner parcourant le fichier contenant la grammaire à analyser
+	private ScannerToken sc; // Scanner parcourant le fichier contenant la grammaire à analyseRecr
 	private NoeudAtom token; // Token actuel, récupéré par le scanner
 	private Stack<Noeud> actions = new Stack<Noeud>(); // Pile contenant les actions de la grammaire analysé
-	//private List<String> dicot = new ArrayList<String>(); // Tableau contenant les éléments terminaux de la grammaire analysé
-	//private List<String> dicont = new ArrayList<String>(); // Tableau contenant les éléments non terminaux de la grammaire analysé
+	private List<NoeudAtom> dicot = new ArrayList<NoeudAtom>(); // Tableau contenant les éléments terminaux de la grammaire analysé
+	private List<NoeudAtom> dicont = new ArrayList<NoeudAtom>(); // Tableau contenant les éléments non terminaux de la grammaire analysé
 
 	public GrammaireZero(String cheminGrammaire) throws FileNotFoundException {
 		sc = new ScannerToken(cheminGrammaire);
-		token = sc.nextToken();
+		token = this.nextToken();
 		arbreDependance.put("S", creerArbreS());
 		arbreDependance.put("N", creerArbreN());
 		arbreDependance.put("E", creerArbreE());
@@ -30,14 +32,6 @@ public class GrammaireZero {
 
 	public void setArbreDependance(Map<String, Noeud> arbreDependance) {
 		this.arbreDependance = arbreDependance;
-	}
-	
-	public Stack<Noeud> getActions() {
-		return actions;
-	}
-
-	public void setActions(Stack<Noeud> actions) {
-		this.actions = actions;
 	}
 
 	// --------------------------------Fonctions gen--------------------------------------
@@ -65,30 +59,50 @@ public class GrammaireZero {
 	public Noeud creerArbreS() {
 		return genConc(genStar(
 				genConc(genConc(genConc(genAtom("N", 0, false), genAtom("->", 0, true)), genAtom("E", 0, false)),
-						genAtom(",", 0, true))),
+						genAtom(",", 1, true))),
 				genAtom(";", 0, true));
 	}
 
 	public Noeud creerArbreN() {
-		return genAtom("IDNTER", 0, true);
+		return genAtom("IDNTER", 2, true);
 	}
 
 	public Noeud creerArbreE() {
-		return genConc(genAtom("T", 0, false), genStar(genConc(genAtom("+", 0, true), genAtom("T", 0, false))));
+		return genConc(genAtom("T", 0, false), genStar(genConc(genAtom("+", 0, true), genAtom("T", 3, false))));
 	}
 
 	public Noeud creerArbreT() {
-		return genConc(genAtom("F", 0, false), genStar(genConc(genAtom(".", 0, true), genAtom("F", 0, false))));
+		return genConc(genAtom("F", 0, false), genStar(genConc(genAtom(".", 0, true), genAtom("F", 4, false))));
 	}
 
 	public Noeud creerArbreF() {
-		return genUnion(genAtom("IDNTER", 0, true), genUnion(genAtom("ELTER", 0, true),
-				genUnion(genConc(genAtom("(", 0, true), genConc(genAtom("E", 0, false), genAtom(")", 0, true))),
-						genUnion(genConc(genAtom("[", 0, true),
-								genConc(genAtom("E", 0, false), genAtom("]", 0, true))),
-								genConc(genAtom("(/", 0, true), genConc(genAtom("E", 0, false), genAtom("/)", 0, true))))
-
-						)));
+		return genUnion(
+				genAtom("IDNTER", 5, true), 
+				genUnion(
+						genAtom("ELTER", 5, true),
+						genUnion(
+								genConc(
+										genAtom("(", 0, true), 
+										genConc(
+												genAtom("E", 0, false), 
+												genAtom(")", 0, true))),
+								genUnion(
+										genConc(
+												genAtom("[", 0, true),
+												genConc(
+														genAtom("E", 0, false), 
+														genAtom("]", 6, true))),
+										genConc(
+												genAtom("(/", 0, true), 
+												genConc(
+														genAtom("E", 0, false), 
+														genAtom("/)", 7, true)
+														)
+												)
+										)
+								)
+						)
+				);
 	}
 
 	// -------------------------------------imprimArbre----------------------------------------
@@ -126,42 +140,60 @@ public class GrammaireZero {
 
 	}
 
-	// ----------------------------------------Analyseur---------------------------------
-	public boolean analyse(Noeud p) {
+	// ----------------------------------------analyseRecur---------------------------------
+	public NoeudAtom nextToken() {
+		// Check
+		if(!sc.hasNext()) {
+			return null;
+		} 
+
+		NoeudAtom result = sc.nextToken();
+		if(result.isTerminal()) {
+			dicot.add(result);
+		} else {
+			dicont.add(result);
+		}
+
+		return result;
+	}
+	
+	public boolean analyse() {
+		return analyseRec(arbreDependance.get("S"));
+	}
+	
+	private boolean analyseRec(Noeud p) {
 		if (p.getCode().equals("conc")) {
-			if (analyse(p.getGauche())) {
-				return analyse(p.getDroit());
+			if (analyseRec(p.getGauche())) {
+				return analyseRec(p.getDroit());
 			}
 		} else if (p.getCode().equals("union")) {
-			if (analyse(p.getGauche())) {
+			if (analyseRec(p.getGauche())) {
 				return true;
 			} else {
-				return analyse(p.getDroit());
+				return analyseRec(p.getDroit());
 			}
 		} else if (p.getCode().equals("star")) {
-			while (analyse(p.getGauche())) {
+			while (analyseRec(p.getGauche())) {
 			}
 			;
 			return true;
 		} else if (p.getCode().equals("un")) {
-			analyse(p.getGauche());
+			analyseRec(p.getGauche());
 			return true;
 		} else if (p.getClass().equals(NoeudAtom.class)) {
 			NoeudAtom pAtom = (NoeudAtom) p;
 			if (pAtom.isTerminal()) {
 				if (pAtom.getCode().equals(token.getCode())) {
 					if (pAtom.getAction() != 0) {
-						this.action(token);
+						this.action(pAtom);
 					}
-					if (sc.hasNext()) {
-						token = sc.nextToken();
-					}
+					token = this.nextToken();
 					return true;
 				}
 			} else { // p n'est pas terminal
-				if (analyse(arbreDependance.get(pAtom.getCode()))) {
+				if (analyseRec(arbreDependance.get(pAtom.getCode()))) {
 					if ((pAtom.getAction() != 0)) {
-						this.action(token);
+						this.action(pAtom);
 					}
 					return true;
 				}
@@ -171,18 +203,25 @@ public class GrammaireZero {
 	}
 
 	// ----------------------------------------Actions----------------------------------------
-	public void action(NoeudAtom pAction){
-		System.out.println("Test");
-		Noeud t1,t2;
+	public NoeudAtom recherche(List<NoeudAtom> dictionnaire) {
+		return dictionnaire.get(dictionnaire.size()-1);
+	}
 
-		switch(pAction.getAction()){
+	public void action(NoeudAtom pAtom){
+		Noeud t1,t2;
+		NoeudAtom t;
+		int action = pAtom.getAction();
+		boolean CAType = pAtom.isTerminal();
+
+		switch(action){
 		case 1:
 			t1 = actions.pop();
-			NoeudAtom t2atom = (NoeudAtom) actions.pop();
-			arbreDependance.put("GPL" + t2atom.getChaine(), t1);
+			t2 = actions.pop();
+			arbreDependance.put("GPL" + t2.getCode(), t1);
 			break;
 		case 2 :
-			actions.push(genAtom(pAction.getChaine(), 0, pAction.isTerminal()));
+			t = this.recherche(dicont);
+			actions.push(genAtom(t.getChaine(), t.getAction(), CAType));
 			break;
 		case 3 : 
 			t1 = actions.pop();
@@ -195,10 +234,12 @@ public class GrammaireZero {
 			actions.push(genConc(t2,t1));
 			break;
 		case 5 :
-			if(pAction.isTerminal()) {
-				actions.push(genAtom(pAction.getChaine(), 0, true));
+			if(CAType) {
+				t = this.recherche(dicot);
+				actions.push(genAtom(t.getChaine(), t.getAction(), true));
 			} else {
-				actions.push(genAtom(pAction.getChaine(), 0, false));
+				t = this.recherche(dicont);
+				actions.push(genAtom(t.getChaine(), t.getAction(), false));
 			}
 			break;
 		case 6 :
@@ -215,13 +256,17 @@ public class GrammaireZero {
 	// ----------------------------------------Main----------------------------------------
 	public static void main(String[] args) throws FileNotFoundException {
 		GrammaireZero c = new GrammaireZero("grammaireZero.txt");
-		// c.imprimArbre(c.getArbreDependance().get("S"));
+		c.imprimArbre(c.getArbreDependance().get("S"));
 		// c.imprimArbre(c.getArbreDependance().get("N"));
 		// c.imprimArbre(c.getArbreDependance().get("E"));
 		// c.imprimArbre(c.getArbreDependance().get("T"));
 		// c.imprimArbre(c.getArbreDependance().get("F"));
 
-		System.out.println(c.analyse(c.getArbreDependance().get("S")));
-		System.out.println(c.getActions());
+		System.out.println(c.analyse());
+		c.imprimArbre(c.getArbreDependance().get("GPLS"));
+		// c.imprimArbre(c.getArbreDependance().get("GPLN"));
+		// c.imprimArbre(c.getArbreDependance().get("GPLE"));
+		// c.imprimArbre(c.getArbreDependance().get("GPLT"));
+		// c.imprimArbre(c.getArbreDependance().get("GPLF"));
 	}
 }
