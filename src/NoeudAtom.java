@@ -8,7 +8,7 @@ public class NoeudAtom extends Noeud{
 	public NoeudAtom(String code, String chaine, int action, boolean terminal) {
 		super(code);
 		this.setChaine(chaine);
-		this.action = 0;
+		this.action = action;
 		this.terminal = terminal;
 	}
 
@@ -37,6 +37,9 @@ public class NoeudAtom extends Noeud{
 	}
 
 	public String toString() {
+		if(chaine == "") {
+			return "Action : " + action + " ; terminal : " + terminal + " ; " + super.toString() ;
+		}
 		return "Chaine : " + chaine + " ; Action : " + action + " ; terminal : " + terminal + " ; " + super.toString() ;
 	}
 

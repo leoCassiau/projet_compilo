@@ -44,6 +44,12 @@ public class Noeud {
 	}
 	
 	public String toString() {
-		return "Code : " + code + " ;  \n	Fils gauche : " + gauche + " ; \n	Fils droit : " + droit + " ; \n";
+		if(gauche != null) {			
+			if(droit != null) {
+				return "Code : " + code + " ; \n	Fils gauche : " + gauche + " ; \n	Fils droit : " + droit + " ; ";
+			}
+			return "Code : " + code + " ; \n	Fils : " + gauche +  " ; ";
+		}
+		return "Code : " + code + " ; ";
 	}
 }
