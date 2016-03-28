@@ -211,13 +211,13 @@ public class GrammaireZero {
 		Noeud t1,t2;
 		NoeudAtom t;
 		int action = pAtom.getAction();
-		boolean CAType = pAtom.isTerminal();
+		boolean CAType = !pAtom.getCode().equals("IDNTER");
 
 		switch(action){
 		case 1:
 			t1 = actions.pop();
 			t2 = actions.pop();
-			arbreDependance.put("GPL" + t2.getCode(), t1);
+			arbreDependance.put("Gpl" + t2.getCode(), t1);
 			break;
 		case 2 :
 			t = this.recherche(dicont);
@@ -255,18 +255,24 @@ public class GrammaireZero {
 
 	// ----------------------------------------Main----------------------------------------
 	public static void main(String[] args) throws FileNotFoundException {
-		GrammaireZero c = new GrammaireZero("grammaireZero.txt");
-		c.imprimArbre(c.getArbreDependance().get("S"));
-		// c.imprimArbre(c.getArbreDependance().get("N"));
-		// c.imprimArbre(c.getArbreDependance().get("E"));
-		// c.imprimArbre(c.getArbreDependance().get("T"));
-		// c.imprimArbre(c.getArbreDependance().get("F"));
+		//GrammaireZero g = new GrammaireZero("grammaireZero.txt");
+		GrammaireZero g = new GrammaireZero("grammaireTest.txt");
+		
+		//g.imprimArbre(g.getArbreDependance().get("S"));
+		//g.imprimArbre(g.getArbreDependance().get("N"));
+		//g.imprimArbre(g.getArbreDependance().get("E"));
+		//g.imprimArbre(g.getArbreDependance().get("T"));
+		//g.imprimArbre(g.getArbreDependance().get("F"));
 
-		System.out.println(c.analyse());
-		c.imprimArbre(c.getArbreDependance().get("GPLS"));
-		// c.imprimArbre(c.getArbreDependance().get("GPLN"));
-		// c.imprimArbre(c.getArbreDependance().get("GPLE"));
-		// c.imprimArbre(c.getArbreDependance().get("GPLT"));
-		// c.imprimArbre(c.getArbreDependance().get("GPLF"));
+		System.out.println("Analyse = " + g.analyse());
+		System.out.println("Clefs de l'arbre de dépendance : " + g.getArbreDependance().keySet());
+		
+		//g.imprimArbre(g.getArbreDependance().get("GplS"));
+		//g.imprimArbre(g.getArbreDependance().get("GplN"));
+		//g.imprimArbre(g.getArbreDependance().get("GplE"));
+		//g.imprimArbre(g.getArbreDependance().get("GplT"));
+		//g.imprimArbre(g.getArbreDependance().get("GplF"));
+		
+		g.imprimArbre(g.getArbreDependance().get("GplS0"));
 	}
 }
