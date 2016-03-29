@@ -97,7 +97,7 @@ public class Gpl {
 			break;
 		case  11://INFE
 			valeur = 0;
-			if(pilex.get(spx) <= pilex.get(spx-1)){
+			if(pilex.get(spx-1) <= pilex.get(spx)){
 				valeur = 1;
 			}
 			pilex.remove(spx);
@@ -129,7 +129,7 @@ public class Gpl {
 			c0 ++;
 			break;
 			
-			//Inst pour entrÃ©e/sortie
+			//Inst pour entree/sortie
 		case 14: //RD
 			spx ++;
 			valeur = sc.nextInt();
@@ -147,7 +147,7 @@ public class Gpl {
 			c0++;
 			break;
 			
-			//OpÃ©rateurs
+			//Operateurs
 		case  18://ADD
 			valeur = pilex.get(spx) + pilex.get(spx-1);
 			pilex.remove(spx);
@@ -187,7 +187,7 @@ public class Gpl {
 		case  24://DEC
 			break;
 			
-			//OpÃ©rateurs logiques
+			//Operateurs logiques
 		case  25://AND
 			valeur = 0;
 			if((Integer)pilex.get(spx) == 1 && (Integer)pilex.get(spx-1) == 1){
@@ -222,25 +222,26 @@ public class Gpl {
 			c0 ++;
 			break;
 		case 28://AFF
-			valeur =  pilex.get(spx);
-			pilex.remove(spx);
-			spx --;
-			pilex.remove(spx);
-			
+			valeur =  pilex.pop();
+			pilex.pop();
+			spx = pilex.size()-1;
+
 			//On empile dans tmp jusqu'à l'adresse chargée
 			for(int i=spx; i>adresse; i--){
-				tmp.push(pilex.pop());
+				tmp.push(pilex.pop());				
 			}
 			
-			//On met la bonne valeur 
+			//On met la bonne valeur à la place de l'ancienne
+			pilex.pop();
 			pilex.push(valeur);
 			
 			//On remet la pile comme avant sans l'ancienne valeur
-			for(int i=0; i<tmp.size()-1; i++){
-				pilex.push(tmp.get(i));
+			if(!tmp.isEmpty()){
+				for(int i=0; i<tmp.size()+1; i++){
+					pilex.push(tmp.pop());
+				}
 			}
-			
-			tmp.clear();
+
 			c0++;
 			break;
 		case 29://STOP inst d'arret
@@ -252,109 +253,86 @@ public class Gpl {
 			break;
 			
 		}
-		//System.out.println("valeur: " + x);
-		//System.out.println("C0 : "+c0);
-		//System.out.println("pilex : " + pilex.get(spx));
-		//System.out.println("pcode : " + pcode.get(c0));
-		System.out.println("------------------------");
 	}
 	
 	public void exec(){
 		programSom();
-		//test();
+
 		while(c0 < pcode.size()){
 			interpreter(pcode.get(c0));
 		}
 		
-		System.out.println("Pilex : ");
+		System.out.println("\nPilex : ");
 		for(int i =pilex.size()-1; i>=0; i--){
 			System.out.println("|"+pilex.get(i)+"|");
 		}
 		
 	}
-	
-	public void test(){
-		this.pcode.push(1);//LDA
-		this.pcode.push(0);//0	
-		this.pcode.push(3);//LDC
-		this.pcode.push(10);//10
-		this.pcode.push(28);//AFF
-		
-		this.pcode.push(1);//LDA
-		this.pcode.push(1);//1	
-		this.pcode.push(3);//LDC
-		this.pcode.push(50);//50
-		this.pcode.push(28);//AFF
-		
-		//Ici on a 10 en dessous et 50 au dessus
-		
-		this.pcode.push(1);//LDA
-		this.pcode.push(0);//0	
-		
-		this.pcode.push(2);//LDV
-		this.pcode.push(1);//1	
-		
-		this.pcode.push(2);//LDV
-		this.pcode.push(0);//0
-		
-		this.pcode.push(18);//ADD
-		this.pcode.push(28);//AFF
-		/**/
-	}
-	
+
 	public void programSom(){
-		this.pcode.push(1);//LDA  0eme
-		this.pcode.push(2);//3
+		//VAR
+		this.pcode.push(1);//LDA     0
+		this.pcode.push(0);//0	
+		this.pcode.push(1);//LDA
+		this.pcode.push(1);//1	
+		this.pcode.push(1);//LDA 
+		this.pcode.push(2);//2       5
+		
+		this.pcode.push(1);//LDA     6
+		this.pcode.push(2);//2
 		this.pcode.push(14);//RD
 		this.pcode.push(28);//AFF
 		
-		this.pcode.push(1);//LDA
-		this.pcode.push(1);//2
+		this.pcode.push(1);//LDA    10
+		this.pcode.push(1);//1
 		this.pcode.push(3);//LDC
 		this.pcode.push(0);//0
 		this.pcode.push(28);//AFF
 		
-		this.pcode.push(1);//LDA    
-		this.pcode.push(0);//1      10eme
+		this.pcode.push(1);//LDA      15
+		this.pcode.push(0);//0      
 		this.pcode.push(3);//LDC
 		this.pcode.push(0);//0
 		this.pcode.push(28);//AFF
 		//OK
 		
-		this.pcode.push(2);//LDV    
-		this.pcode.push(0);//1      15eme
+		this.pcode.push(2);//LDV    20
+		this.pcode.push(0);//0      
 		this.pcode.push(2);//LDV
-		this.pcode.push(2);//3
+		this.pcode.push(2);//2
 		this.pcode.push(11);//INFE	
 		
-		this.pcode.push(5);//JIF     
-		this.pcode.push(39);//38    20eme
+		this.pcode.push(5);//JIF    25 
+		this.pcode.push(45);//45    
 		
-		this.pcode.push(1);//LDA
-		this.pcode.push(1);//2
-		this.pcode.push(2);//LDV
-		this.pcode.push(1);//2
-		this.pcode.push(2);//LDV
-		this.pcode.push(0);//1
+		this.pcode.push(1);//LDA S
+		this.pcode.push(1);//1
+		this.pcode.push(2);//LDV S
+		this.pcode.push(1);//1      30
+		this.pcode.push(2);//LDV I
+		this.pcode.push(0);//0
 		this.pcode.push(18);//ADD
 		this.pcode.push(28);//AFF
 		
-		this.pcode.push(1);//LDA       
-		this.pcode.push(0);//1         30eme
+		
+		this.pcode.push(1);//LDA       35     
+		this.pcode.push(0);//0         
 		this.pcode.push(2);//LDV
-		this.pcode.push(0);//1
+		this.pcode.push(0);//0
+		this.pcode.push(3);//LDC
+		this.pcode.push(1);//1          40
 		this.pcode.push(18);//ADD I+1
 		this.pcode.push(28);//AFF
 		
 		this.pcode.push(4);//JMP
-		this.pcode.push(14);//15
+		this.pcode.push(20);//20
 		
 		
-		this.pcode.push(2);//LDV
+		this.pcode.push(2);//LDV       45
 		this.pcode.push(1);//2
 		this.pcode.push(17);//WRTLN
-		
-		this.pcode.push(29);
+
+		this.pcode.push(29);//END       48
 		
 	}
 	
