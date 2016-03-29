@@ -5,16 +5,19 @@ import java.util.Stack;
 public class Gpl {
 	
 	//Pilex et c0
-	private Stack<Comparable> pilex = new Stack<Comparable>();
+	private Stack<Integer> pilex = new Stack<Integer>();
 	private Stack<Integer> pcode = new Stack< Integer>();
 	
 	//Pointeurs de pile
 	private int spx = -1;
 	private int c0 = 0;
 	
+	//Variables temporaires
+	private Stack<Integer> tmp = new Stack<Integer>();
+	private int adresse;
+	
 	//Variables temp
-	private int valeurInteger = 0;
-	//private String valeurString = "";
+	private int valeur = 0;
 	private Scanner sc = new Scanner(System.in);
 
 	public void interpreter(int x){
@@ -22,7 +25,8 @@ public class Gpl {
 		switch(x){
 		//Inst de chargement
 		case 1: //LDA
-			spx ++;
+			spx ++;		
+			adresse = pcode.get(c0 + 1);
 			pilex.push( pcode.get(c0 + 1) );
 			c0 = c0 +2;
 			break;
@@ -40,14 +44,16 @@ public class Gpl {
 			//Inst de saut
 		case 4 ://JMP @
 			c0 = pcode.get(c0+1);
+
 			break;
 		case 5 ://JIF @			
-			if(pilex.get(spx) == new Integer(0)){
+			if(pilex.get(spx) == 0){
 				c0 = pcode.get(c0+1);
 			}
 			else{
 				c0 = c0+2;
 			}
+			pilex.remove(spx);
 			spx --;
 			break;
 		case  6://JSR @
@@ -55,119 +61,123 @@ public class Gpl {
 		case  7://RSR @
 			break;
 			
-			//Opérateurs relationnels
+			//Operateurs relationnels
 		case  8://SUP
-			valeurInteger = 0;
+			valeur = 0;
 			if((Integer)pilex.get(spx) > (Integer)pilex.get(spx-1)){
-				valeurInteger = 1;
+				valeur = 1;
 			}
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  9://SUPE
-			valeurInteger = 0;
+			valeur = 0;
 			if((Integer)pilex.get(spx) >= (Integer)pilex.get(spx-1)){
-				valeurInteger = 1;
+				valeur = 1;
 			}
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  10://INF
-			valeurInteger = 0;
+			valeur = 0;
 			if((Integer)pilex.get(spx) < (Integer)pilex.get(spx-1)){
-				valeurInteger = 1;
+				valeur = 1;
 			}
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  11://INFE
-			valeurInteger = 0;
-			if((Integer)pilex.get(spx) <= (Integer)pilex.get(spx-1)){
-				valeurInteger = 1;
+			valeur = 0;
+			if(pilex.get(spx) <= pilex.get(spx-1)){
+				valeur = 1;
 			}
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  12://EG
-			valeurInteger = 0;
+			valeur = 0;
 			if((Integer)pilex.get(spx) == (Integer)pilex.get(spx-1)){
-				valeurInteger = 1;
+				valeur = 1;
 			}
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  13://DIFF
-			valeurInteger = 0;
+			valeur = 0;
 			if((Integer)pilex.get(spx) != (Integer)pilex.get(spx-1)){
-				valeurInteger = 1;
+				valeur = 1;
 			}
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 			
 			//Inst pour entrée/sortie
 		case 14: //RD
 			spx ++;
-			valeurInteger = sc.nextInt();
-			pilex.push(valeurInteger);
+			valeur = sc.nextInt();
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  15://RDCN
 			break;
 		case  16://WRT
+			System.out.print(pilex.get(spx));
+			c0++;
 			break;
 		case  17://WRTLN
+			System.out.println(pilex.get(spx));
+			c0++;
 			break;
 			
 			//Opérateurs
 		case  18://ADD
-			valeurInteger = (Integer)pilex.get(spx) + (Integer)pilex.get(spx-1);
+			valeur = pilex.get(spx) + pilex.get(spx-1);
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  19://Moins
-			valeurInteger = (Integer)pilex.get(spx) - (Integer)pilex.get(spx-1);
+			valeur = (Integer)pilex.get(spx) - (Integer)pilex.get(spx-1);
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  20://Div
-			valeurInteger = (Integer)pilex.get(spx) / (Integer)pilex.get(spx-1);
+			valeur = (Integer)pilex.get(spx) / (Integer)pilex.get(spx-1);
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  21://Mult
-			valeurInteger = (Integer)pilex.get(spx) * (Integer)pilex.get(spx-1);
+			valeur = (Integer)pilex.get(spx) * (Integer)pilex.get(spx-1);
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  22://Neq (-unaire -22)
@@ -179,48 +189,59 @@ public class Gpl {
 			
 			//Opérateurs logiques
 		case  25://AND
-			valeurInteger = 0;
+			valeur = 0;
 			if((Integer)pilex.get(spx) == 1 && (Integer)pilex.get(spx-1) == 1){
-				valeurInteger = 1;
+				valeur = 1;
 			}
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  26://OR
-			valeurInteger = 0;
+			valeur = 0;
 			if((Integer)pilex.get(spx) == 1 || (Integer)pilex.get(spx-1) == 1){
-				valeurInteger = 1;
+				valeur = 1;
 			}
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case  27://NOT
-			valeurInteger = 0;
+			valeur = 0;
 			if((Integer)pilex.get(spx) != 1 && (Integer)pilex.get(spx-1) != 1){
-				valeurInteger = 1;
+				valeur = 1;
 			}
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
+			pilex.push(valeur);
 			c0 ++;
 			break;
 		case 28://AFF
-			System.out.println("Affectation -> "+pilex.get(spx));
-			valeurInteger = (Integer) pilex.get(spx);
+			valeur =  pilex.get(spx);
 			pilex.remove(spx);
 			spx --;
 			pilex.remove(spx);
-			pilex.push(valeurInteger);
-			c0++;
 			
-
+			//On empile dans tmp jusqu'� l'adresse charg�e
+			for(int i=spx; i>adresse; i--){
+				tmp.push(pilex.pop());
+			}
+			
+			//On met la bonne valeur 
+			pilex.push(valeur);
+			
+			//On remet la pile comme avant sans l'ancienne valeur
+			for(int i=0; i<tmp.size()-1; i++){
+				pilex.push(tmp.get(i));
+			}
+			
+			tmp.clear();
+			c0++;
 			break;
 		case 29://STOP inst d'arret
 			c0 = pcode.size();
@@ -231,7 +252,8 @@ public class Gpl {
 			break;
 			
 		}
-		System.out.println("valeur: " + x);
+		//System.out.println("valeur: " + x);
+		//System.out.println("C0 : "+c0);
 		//System.out.println("pilex : " + pilex.get(spx));
 		//System.out.println("pcode : " + pcode.get(c0));
 		System.out.println("------------------------");
@@ -239,70 +261,103 @@ public class Gpl {
 	
 	public void exec(){
 		programSom();
-
+		//test();
 		while(c0 < pcode.size()){
 			interpreter(pcode.get(c0));
 		}
 		
 		System.out.println("Pilex : ");
-		for(int i =0; i<pilex.size(); i++){
+		for(int i =pilex.size()-1; i>=0; i--){
 			System.out.println("|"+pilex.get(i)+"|");
 		}
 		
-
-		System.out.println("\nPcode : ");
-		for(int i =0; i<pcode.size(); i++){
-			System.out.println("|"+pcode.get(i)+"|");
-		}
+	}
+	
+	public void test(){
+		this.pcode.push(1);//LDA
+		this.pcode.push(0);//0	
+		this.pcode.push(3);//LDC
+		this.pcode.push(10);//10
+		this.pcode.push(28);//AFF
 		
+		this.pcode.push(1);//LDA
+		this.pcode.push(1);//1	
+		this.pcode.push(3);//LDC
+		this.pcode.push(50);//50
+		this.pcode.push(28);//AFF
+		
+		//Ici on a 10 en dessous et 50 au dessus
+		
+		this.pcode.push(1);//LDA
+		this.pcode.push(0);//0	
+		
+		this.pcode.push(2);//LDV
+		this.pcode.push(1);//1	
+		
+		this.pcode.push(2);//LDV
+		this.pcode.push(0);//0
+		
+		this.pcode.push(18);//ADD
+		this.pcode.push(28);//AFF
+		/**/
 	}
 	
 	public void programSom(){
-		this.pcode.push(1);//LDA
-		this.pcode.push(3);//3
+		this.pcode.push(1);//LDA  0eme
+		this.pcode.push(2);//3
 		this.pcode.push(14);//RD
 		this.pcode.push(28);//AFF
+		
 		this.pcode.push(1);//LDA
-		this.pcode.push(2);//2
+		this.pcode.push(1);//2
 		this.pcode.push(3);//LDC
 		this.pcode.push(0);//0
 		this.pcode.push(28);//AFF
 		
-		this.pcode.push(1);//LDA
-		this.pcode.push(1);//1
+		this.pcode.push(1);//LDA    
+		this.pcode.push(0);//1      10eme
 		this.pcode.push(3);//LDC
 		this.pcode.push(0);//0
 		this.pcode.push(28);//AFF
+		//OK
 		
+		this.pcode.push(2);//LDV    
+		this.pcode.push(0);//1      15eme
 		this.pcode.push(2);//LDV
-		this.pcode.push(1);//1
-		this.pcode.push(2);//LDV
-		this.pcode.push(3);//3
-		this.pcode.push(11);//INFE
-		this.pcode.push(5);//JIF
-		this.pcode.push(38);//38
+		this.pcode.push(2);//3
+		this.pcode.push(11);//INFE	
+		
+		this.pcode.push(5);//JIF     
+		this.pcode.push(39);//38    20eme
+		
 		this.pcode.push(1);//LDA
-		this.pcode.push(2);//2
+		this.pcode.push(1);//2
 		this.pcode.push(2);//LDV
-		this.pcode.push(2);//2
+		this.pcode.push(1);//2
 		this.pcode.push(2);//LDV
-		this.pcode.push(1);//1
-		this.pcode.push(18);//ADD S+I
-		this.pcode.push(28);
-		this.pcode.push(1);
-		this.pcode.push(1);
-		this.pcode.push(2);
-		this.pcode.push(1);
+		this.pcode.push(0);//1
+		this.pcode.push(18);//ADD
+		this.pcode.push(28);//AFF
+		
+		this.pcode.push(1);//LDA       
+		this.pcode.push(0);//1         30eme
+		this.pcode.push(2);//LDV
+		this.pcode.push(0);//1
 		this.pcode.push(18);//ADD I+1
-		this.pcode.push(28);
-		this.pcode.push(4);
-		this.pcode.push(15);
-		this.pcode.push(2);
-		this.pcode.push(2);
+		this.pcode.push(28);//AFF
+		
+		this.pcode.push(4);//JMP
+		this.pcode.push(14);//15
+		
+		
+		this.pcode.push(2);//LDV
+		this.pcode.push(1);//2
 		this.pcode.push(17);//WRTLN
+		
 		this.pcode.push(29);
+		
 	}
 	
-	
+
 	
 }
