@@ -35,9 +35,8 @@ public class GrammaireGpl extends Grammaire {
 		Noeud t1,t2;
 		NoeudAtom t;
 		String type = p.getCode();
-		//String chaine = p.();
 
-		switch(2){
+		switch(p.getAction()){
 
 		}
 	}

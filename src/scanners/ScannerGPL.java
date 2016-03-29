@@ -21,7 +21,7 @@ public class ScannerGPL {
 		// Entier ?
 		try {
 			Integer.parseInt(token);
-			return new Token("Entier", new NoeudAtom(token, 0, true));
+			return new Token("ent", new NoeudAtom(token, 0, true));
 		}
 		// Pas entier !
 		catch(NumberFormatException e) {
@@ -31,10 +31,11 @@ public class ScannerGPL {
 					token.equals("<") || token.equals(">") ||
 					token.equals("(") || token.equals(")") ||
 					token.equals(",") || token.equals(";") ||
-					token.equals(".") || token.equals("+")) {
-				return new Token("Symbole", new NoeudAtom(token, 0, true));
+					token.equals(".") || token.equals("+") ||
+					token.equals("Program") || token.equals("var")) {
+				return new Token(token, new NoeudAtom(token, 0, true));
 			} else {
-				return new Token("Identificateur", new NoeudAtom( token, 0, true));
+				return new Token("ident", new NoeudAtom(token, 0, true));
 			}
 		}
 	}

@@ -1,0 +1,14 @@
+Program Som
+	var I, S, N ;
+	func read(), writln();
+debut
+	read( N ) ;
+	S := 0 ;
+	I := 0 ;
+	while I <= N do
+		debut 
+			S := S + I ;
+			I := I + 1 ;
+		fin
+	writeln( S ) ;
+fin.
