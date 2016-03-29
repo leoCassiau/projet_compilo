@@ -8,49 +8,85 @@ import java.util.Stack;
 
 public class GrammaireZero {
 
-	private Map<String, Noeud> arbreDependance = new HashMap<String, Noeud>(); // Arbre de dépendance de la grammaire zéro
+	private Map<String, Noeud> arbreDependances = new HashMap<String, Noeud>(); // Arbre de dépendance de la grammaire zéro
 	private ScannerToken sc; // Scanner parcourant le fichier contenant la grammaire à analyseRecr
 	private NoeudAtom token; // Token actuel, récupéré par le scanner
 	private Stack<Noeud> actions = new Stack<Noeud>(); // Pile contenant les actions de la grammaire analysé
 	private List<NoeudAtom> dicot = new ArrayList<NoeudAtom>(); // Tableau contenant les éléments terminaux de la grammaire analysé
 	private List<NoeudAtom> dicont = new ArrayList<NoeudAtom>(); // Tableau contenant les éléments non terminaux de la grammaire analysé
 
+	/**
+	 * Constructeur de GrammaireZero
+	 * @param cheminGrammaire Le chemin de la grammaire à analyser
+	 * @throws FileNotFoundException Levé si le chemin indiqué ne contient pas de fichier
+	 */
 	public GrammaireZero(String cheminGrammaire) throws FileNotFoundException {
+		// 
 		sc = new ScannerToken(cheminGrammaire);
 		token = this.nextToken();
-		arbreDependance.put("S", creerArbreS());
-		arbreDependance.put("N", creerArbreN());
-		arbreDependance.put("E", creerArbreE());
-		arbreDependance.put("T", creerArbreT());
-		arbreDependance.put("F", creerArbreF());
+		
+		// GenForet() : génère les arbres de dépendances de la grammaire zéro
+		arbreDependances.put("S", creerArbreS());
+		arbreDependances.put("N", creerArbreN());
+		arbreDependances.put("E", creerArbreE());
+		arbreDependances.put("T", creerArbreT());
+		arbreDependances.put("F", creerArbreF());
 	}
 
-	//--------------------------------getters & setters--------------------------------
+	/**
+	 * Accesseur de l'attribut arbreDependance
+	 * @return L'arbre des dépendances de la grammaire analysé
+	 */
 	public Map<String, Noeud> getArbreDependance() {
-		return arbreDependance;
-	}
-
-	public void setArbreDependance(Map<String, Noeud> arbreDependance) {
-		this.arbreDependance = arbreDependance;
+		return arbreDependances;
 	}
 
 	// --------------------------------Fonctions gen--------------------------------------
+	/**
+	 * Génère un noeud de concaténation entre p1 et p2
+	 * @param p1 Noeud à gauche
+	 * @param p2 Noeud à droite
+	 * @return Noeud ayant pour code "conc", pour fils gauche p1 et pour fils droit p2
+	 */
 	public Noeud genConc(Noeud p1, Noeud p2) {
 		return new Noeud(p1, p2, "conc");
 	}
 
+	/**
+	 * Génère un noeud étoile avec pour fils p
+	 * @param p Noeud fils
+	 * @return Noeud ayant pour code "star" et pour fils gauche p
+	 */
 	public Noeud genStar(Noeud p) {
 		return new Noeud(p, "star");
 	}
 
+	/**
+	 * Génère un noeud d'union entre p1 et p2
+	 * @param p1 Noeud gauche
+	 * @param p2 Noeud droit
+	 * @return Noeud ayant pour code "union", pour fils gauche p1 et pour fils droit p2
+	 */
 	public Noeud genUnion(Noeud p1, Noeud p2) {
 		return new Noeud(p1, p2, "union");
 	}
 
+	/**
+	 * Génère un noeud d'unicité avec pour fils p
+	 * @param p Noeud fils
+	 * @return Noeud ayant pour code "un" et pour fils p
+	 */
 	public Noeud genUn(Noeud p) {
 		return new Noeud(p, "un");
 	}
 
+	/**
+	 * Génère un noeud atomique avec son code, son action et son type
+	 * @param code Code du noeud généré
+	 * @param action Action du noeud généré
+	 * @param terminal Type du noeud généré
+	 * @return Noeud atomique avec pour chaine "", et le code, l'action et le type indiqué en entrée
+	 */
 	public NoeudAtom genAtom(String code, int action, boolean terminal) {
 		return new NoeudAtom(code, "", action, terminal);
 	}
@@ -158,7 +194,7 @@ public class GrammaireZero {
 	}
 	
 	public boolean analyse() {
-		return analyseRec(arbreDependance.get("S"));
+		return analyseRec(arbreDependances.get("S"));
 	}
 	
 	private boolean analyseRec(Noeud p) {
@@ -191,7 +227,7 @@ public class GrammaireZero {
 					return true;
 				}
 			} else { // p n'est pas terminal
-				if (analyseRec(arbreDependance.get(pAtom.getCode()))) {
+				if (analyseRec(arbreDependances.get(pAtom.getCode()))) {
 					if ((pAtom.getAction() != 0)) {
 						this.action(pAtom);
 					}
@@ -217,7 +253,7 @@ public class GrammaireZero {
 		case 1:
 			t1 = actions.pop();
 			t2 = actions.pop();
-			arbreDependance.put("Gpl" + t2.getCode(), t1);
+			arbreDependances.put("Gpl" + t2.getCode(), t1);
 			break;
 		case 2 :
 			t = this.recherche(dicont);
@@ -255,8 +291,8 @@ public class GrammaireZero {
 
 	// ----------------------------------------Main----------------------------------------
 	public static void main(String[] args) throws FileNotFoundException {
-		//GrammaireZero g = new GrammaireZero("grammaireZero.txt");
-		GrammaireZero g = new GrammaireZero("grammaireTest.txt");
+		GrammaireZero g = new GrammaireZero("grammaireZero.txt");
+		//GrammaireZero g = new GrammaireZero("grammaireTest.txt");
 		
 		//g.imprimArbre(g.getArbreDependance().get("S"));
 		//g.imprimArbre(g.getArbreDependance().get("N"));
@@ -267,12 +303,12 @@ public class GrammaireZero {
 		System.out.println("Analyse = " + g.analyse());
 		System.out.println("Clefs de l'arbre de dépendance : " + g.getArbreDependance().keySet());
 		
-		//g.imprimArbre(g.getArbreDependance().get("GplS"));
+		g.imprimArbre(g.getArbreDependance().get("GplS"));
 		//g.imprimArbre(g.getArbreDependance().get("GplN"));
 		//g.imprimArbre(g.getArbreDependance().get("GplE"));
 		//g.imprimArbre(g.getArbreDependance().get("GplT"));
 		//g.imprimArbre(g.getArbreDependance().get("GplF"));
 		
-		g.imprimArbre(g.getArbreDependance().get("GplS0"));
+		//g.imprimArbre(g.getArbreDependance().get("GplS0"));
 	}
 }
