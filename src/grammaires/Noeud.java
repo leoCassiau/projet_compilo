@@ -1,3 +1,5 @@
+package grammaires;
+
 public class Noeud {
 
 	protected Noeud gauche;
