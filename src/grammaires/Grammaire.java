@@ -112,6 +112,7 @@ public abstract class Grammaire {
 				}
 			}
 		}
+		
 		return false;
 	}
 

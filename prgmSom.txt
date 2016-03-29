@@ -1,6 +1,5 @@
 Program Som
-	var I, S, N ;
-	func read(), writln();
+	var I , S , N ;
 debut
 	read( N ) ;
 	S := 0 ;
@@ -11,4 +10,4 @@ debut
 			I := I + 1 ;
 		fin
 	writeln( S ) ;
-fin.
+fin .

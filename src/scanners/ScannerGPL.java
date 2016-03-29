@@ -7,21 +7,19 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 
-public class ScannerGPL {
-
-	private Scanner sc;
+public class ScannerGPL extends ScannerToken {
 
 	public ScannerGPL(String cheminFichier) throws FileNotFoundException {
-		sc = new Scanner(new File(cheminFichier));
+		super(cheminFichier);
 	}
 
 	public Token nextToken() {
 		String token = sc.next();
-				
+
 		// Entier ?
 		try {
 			Integer.parseInt(token);
-			return new Token("ent", new NoeudAtom(token, 0, true));
+			return new Token(token, new NoeudAtom("ent", 0, true));
 		}
 		// Pas entier !
 		catch(NumberFormatException e) {
@@ -32,21 +30,20 @@ public class ScannerGPL {
 					token.equals("(") || token.equals(")") ||
 					token.equals(",") || token.equals(";") ||
 					token.equals(".") || token.equals("+") ||
-					token.equals("Program") || token.equals("var")) {
-				return new Token(token, new NoeudAtom(token, 0, true));
-			} else {
-				return new Token("ident", new NoeudAtom(token, 0, true));
-			}
+					token.equals("Program") || token.equals("var") ||
+					token.equals("debut") || token.equals("fin") ||
+					token.equals("func") || token.equals("read(") ||
+					token.equals("writeln(") || token.equals("while") ||
+					token.equals("do")) {
+						return new Token(token, new NoeudAtom(token, 0, true));
+					} else {
+						return new Token(token, new NoeudAtom("ident", 0, true));
+					}
 		}
 	}
 
-	public boolean hasNext() {
-		return sc.hasNext();
-	}
-
-	
 	public static void main(String[] args) throws FileNotFoundException {
-		ScannerGZero sc = new ScannerGZero("grammaireZero.txt");
+		ScannerToken sc = new ScannerGPL("prgmSom.txt");
 		while (sc.hasNext()) {
 			System.out.println(sc.nextToken());
 		}

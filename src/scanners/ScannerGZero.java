@@ -40,7 +40,7 @@ public class ScannerGZero extends ScannerToken {
 		
 		// Element de la grammaire zero ?
 		if(chaineToken.equals(".") || chaineToken.equals("+") ||
-				chaineToken.equals("(\\") || chaineToken.equals("\\)") ||
+				chaineToken.equals("(/") || chaineToken.equals("/)") ||
 				chaineToken.equals("(") || chaineToken.equals(")") ||
 				chaineToken.equals("[") || chaineToken.equals("]") ||
 				chaineToken.equals(",") || chaineToken.equals(";") || 
