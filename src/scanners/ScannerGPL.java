@@ -2,9 +2,7 @@ package scanners;
 
 import grammaires.NoeudAtom;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
 
 
 public class ScannerGPL extends ScannerToken {
