@@ -1,11 +1,10 @@
-package grammaires;
+package core;
+
+import grammaireZero.ScannerGZero;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
-
-import scanners.ScannerGZero;
-import scanners.ScannerToken;
 
 public abstract class Grammaire {
 

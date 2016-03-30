@@ -1,4 +1,4 @@
-package grammaires;
+package core;
 
 public class Noeud {
 

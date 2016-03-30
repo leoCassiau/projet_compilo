@@ -1,6 +1,5 @@
-package scanners;
+package core;
 
-import grammaires.NoeudAtom;
 
 public class Token {
 

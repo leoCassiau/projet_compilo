@@ -1,11 +1,14 @@
-﻿package grammaires;
+﻿package grammaireZero;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import scanners.Token;
+import core.Grammaire;
+import core.Noeud;
+import core.NoeudAtom;
+import core.Token;
 
 public class GrammaireZero extends Grammaire {
 

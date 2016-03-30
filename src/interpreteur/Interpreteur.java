@@ -1,5 +1,8 @@
+package interpreteur;
+
 import java.util.Scanner;
 import java.util.Stack;
+
 
 
 public class Interpreteur {
@@ -15,16 +18,16 @@ public class Interpreteur {
 	//Variables temporaires
 	private Stack<Integer> tmp = new Stack<Integer>();
 	private int adresse;
-	
-	//Variables temp
 	private int valeur = 0;
 	private Scanner sc = new Scanner(System.in);
 
+	
 	public Interpreteur(Stack<Integer> pcode, Stack<Integer> pilex) {
 		this.pcode = pcode;
 		this.pilex = pilex;
 	}
-	
+
+
 	public void interpreter(int x){
 
 		switch(x){
@@ -145,10 +148,14 @@ public class Interpreteur {
 			break;
 		case  16://WRT
 			System.out.print(pilex.get(spx));
+			pilex.pop();
+			spx --;
 			c0++;
 			break;
 		case  17://WRTLN
 			System.out.println(pilex.get(spx));
+			pilex.pop();
+			spx--;
 			c0++;
 			break;
 			
@@ -246,32 +253,30 @@ public class Interpreteur {
 					pilex.push(tmp.pop());
 				}
 			}
-
 			c0++;
 			break;
 		case 29://STOP inst d'arret
 			c0 = pcode.size();
 			break;
-		case 30://INDA adresse indexée
+		case 30://INDA adresse indexee
 			break;
-		case 31://INDV adresse valuée indexée
+		case 31://INDV adresse valuee indexee
 			break;
 			
 		}
 	}
 	
 	public void exec(){
-		//programSom();
-
 		while(c0 < pcode.size()){
 			interpreter(pcode.get(c0));
 		}
 		
 		System.out.println("\nPilex : ");
+		System.out.println(pilex);
+		/*
 		for(int i =pilex.size()-1; i>=0; i--){
 			System.out.println("|"+pilex.get(i)+"|");
-		}
-		
+		}*/
 	}
 
 	public void programSom(){
@@ -299,7 +304,6 @@ public class Interpreteur {
 		this.pcode.push(3);//LDC
 		this.pcode.push(0);//0
 		this.pcode.push(28);//AFF
-		//OK
 		
 		this.pcode.push(2);//LDV    20
 		this.pcode.push(0);//0      
@@ -331,7 +335,6 @@ public class Interpreteur {
 		
 		this.pcode.push(4);//JMP
 		this.pcode.push(20);//20
-		
 		
 		this.pcode.push(2);//LDV       45
 		this.pcode.push(1);//2

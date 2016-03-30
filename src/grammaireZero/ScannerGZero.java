@@ -1,8 +1,10 @@
-package scanners;
-
-import grammaires.NoeudAtom;
+package grammaireZero;
 
 import java.io.FileNotFoundException;
+
+import core.NoeudAtom;
+import core.ScannerToken;
+import core.Token;
 
 public class ScannerGZero extends ScannerToken {
 

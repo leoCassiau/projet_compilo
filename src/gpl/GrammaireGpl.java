@@ -1,4 +1,6 @@
-package grammaires;
+package gpl;
+
+import grammaireZero.GrammaireZero;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -6,15 +8,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import scanners.ScannerGPL;
-import scanners.Token;
+import core.Grammaire;
+import core.Noeud;
+import core.NoeudAtom;
+import core.Token;
 
 public class GrammaireGpl extends Grammaire {
 	
 	private Stack<Integer> pilex = new Stack<Integer>();
 	private Stack<Integer> pcode = new Stack< Integer>();
 	private List<String> itab = new ArrayList<String>();
+	private Stack<Integer> jump = new Stack<Integer>();
+	
 	private String chaine = "";
+	private int adresse = 0;
+	
 	
 	public GrammaireGpl(String cheminGrammaire, Map<String, Noeud> arbreDependance) throws FileNotFoundException {
 		super(cheminGrammaire);
@@ -64,8 +72,6 @@ public class GrammaireGpl extends Grammaire {
 			return true;
 		} else if (p.getClass().equals(NoeudAtom.class)) {
 			NoeudAtom pAtom = (NoeudAtom) p;
-			//System.out.println("Token = " + token);
-			//System.out.println("p.code = " + p.getCode());
 			if (pAtom.isTerminal()) {
 				if (pAtom.getCode().equals(token)) {
 					if (pAtom.getAction() != 0) {
@@ -75,7 +81,6 @@ public class GrammaireGpl extends Grammaire {
 					return true;
 				}
 			} else { // p n'est pas terminal
-				//System.out.println("GPL = Gpl" + pAtom.getCode());
 				if (analyseRec(arbreDependance.get("Gpl" + pAtom.getCode()))) {
 					if ((pAtom.getAction() != 0)) {
 						this.action(pAtom);
@@ -100,44 +105,78 @@ public class GrammaireGpl extends Grammaire {
 	
 	public void action(NoeudAtom p) {
 		int action = p.getAction();
+
 		switch(action) {
-		case 1 :
-			pcode.push(1); //LDA
+		case 1 : //LDA
+			pcode.push(1);
 			pcode.push(itab.indexOf(chaine));
 			break;
-		case 2 :
-			pcode.push(2); // LDV
+		case 2 : //LDV
+			pcode.push(2);
 			pcode.push(itab.indexOf(chaine));
 			break;
-		case 3 :
-			pcode.push(3); // LDC
+		case 3 : //LDC
+			pcode.push(3);
 			pcode.push(Integer.parseInt(chaine));
 			break;
-		case 4 :
-			pcode.push(4); // JMP
-			pcode.push(14); // TODO
+		case 4 : //JMP
+			pcode.push(4);
+			//pcode.push(14);
+			pcode.push(-1);
+			jump.push(pcode.size());
 			break;
-		case 5 :
-			pcode.push(5); // JIF
-			pcode.push(39); // TODO
+		case 5 : //JIF
+			pcode.push(5);
+			pcode.push(-1);
+			//pcode.push(39);
+			jump.push(adresse);
 			break;
-		case 11 :
-			pcode.push(11); //INFE
+		case 8: //SUP
+			pcode.push(8);
 			break;
-		case 14 :
-			pcode.push(14); // RD
+		case 9: //SUPE
+			pcode.push(9);
 			break;
-		case 17 : 
-			pcode.push(17); // WRTLN
+		case 10: //INF
+			pcode.push(10);
 			break;
-		case 18 : 
-			pcode.push(18); // ADD
+		case 11 : //INFE
+			pcode.push(11); 
 			break;
-		case 28 :
-			pcode.push(28); // AFF
+		case 12: //EG
+			pcode.push(12);
 			break;
-		case 29 :
-			pcode.push(29); // END
+		case 14 ://RD
+			pcode.push(14); 
+			break;
+		case 17 ://WRTLN
+			pcode.push(17); 
+			break;
+		case 18 : //ADD
+			pcode.push(18); 
+			break;
+		case 28 : //AFF
+			pcode.push(28);
+			break;
+		case 29 : //END
+			pcode.push(29);
+			
+			Stack<Integer> tmp = new Stack< Integer>();
+			int valeur = 0;
+			int nombre = 0;
+			//On remplace tous les -1 par les bonnes adresses
+			while(!pcode.isEmpty()){
+				valeur = pcode.pop();
+				if(valeur == -1){
+					valeur = jump.get(nombre);
+					nombre++;
+				}
+				tmp.push(valeur);
+			}
+			//On remet tmp dans pcode
+			while(!tmp.isEmpty()){
+				pcode.push(tmp.pop());
+			}
 			break;
 		case 100 :
 			pilex.push(pilex.size()); // Var
@@ -151,6 +190,11 @@ public class GrammaireGpl extends Grammaire {
 			pcode.push(tmpValeur);
 			pcode.push(tmpCondition);
 			break;
+		case 102:
+			adresse = pcode.size();
+			break;
+		
+			
 		}
 	}
 	
@@ -160,7 +204,7 @@ public class GrammaireGpl extends Grammaire {
 		
 		GrammaireGpl gpl = new GrammaireGpl("prgmSom.txt", gzero.getArbreDependance());
 		System.out.println("Analyse prgm.txt = " + gpl.analyse());
-		System.out.println("PCode : " + gpl.getPcode());
-		System.out.println("Pilex : " + gpl.getPilex());
+		System.out.println("\nPCode : \n" + gpl.getPcode());
+		System.out.println("\nPilex : \n" + gpl.getPilex());
 	}
 }
