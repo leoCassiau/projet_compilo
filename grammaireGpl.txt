@@ -6,7 +6,7 @@ Decl_fonction -> 'func' . 'ident' . '(' . ')' . [ ',' . 'func' . 'ident' . '(' .
 Bloc -> 'debut' . Inst . 'fin' ,
 Inst -> [ If + While +  Affectation + Writeln + Read ] ,
 If -> 'if' . Element_boolean . 'then' . Inst . (/ 'else' . Inst /) ,
-While -> 'while' . Element_boolean  . 'do#5' . Bloc#4 ,
+While -> 'while#102' . Element_boolean  . 'do#5' . Bloc#4 ,
 Element_boolean -> Entier . Cond . Entier#101 ,
 Cond -> '<=#11' + '>=' + '==' ,
 Affectation -> 'ident#1' . ':=' . ( 'ent#3' + Somme ) . ';#28' ,
